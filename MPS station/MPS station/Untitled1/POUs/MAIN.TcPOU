@@ -17,7 +17,10 @@ CASE GIOL.CaseNum OF
 	50:GIOL.TaskName:="Sixth Tsak";
 	ELSE
 		GIOL.CaseNum:=0;
-END_CASE]]></ST>
+END_CASE
+
+//some random change
+]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="69" Count="0" />
@@ -27,6 +30,9 @@ END_CASE]]></ST>
       <LineId Id="78" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="77" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="91" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
