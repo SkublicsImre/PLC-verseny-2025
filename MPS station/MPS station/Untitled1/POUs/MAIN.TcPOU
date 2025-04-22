@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="MAIN" Id="{55f2dad4-fae0-4be3-a7be-b728afd4fa9e}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	INMODE : INMODE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[INMODE(); 
+CASE GIOL.CaseNum OF
+	0:GIOL.TaskName:="First Tsak";
+	10:GIOL.TaskName:="Second Tsak";
+	20:GIOL.TaskName:="Third Tsak";
+	30:GIOL.TaskName:="Fourth Tsak";
+	40:GIOL.TaskName:="Fifth Tsak";
+	50:GIOL.TaskName:="Sixth Tsak";
+	ELSE
+		GIOL.CaseNum:=0;
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="69" Count="0" />
+      <LineId Id="75" Count="1" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="81" Count="3" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="77" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

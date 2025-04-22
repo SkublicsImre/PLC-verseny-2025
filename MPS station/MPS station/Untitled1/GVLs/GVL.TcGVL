@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <GVL Name="GVL" Id="{1f21cc66-f43e-4f93-bb59-e073b7291218}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	In0 	:	BOOL;
+	In1 	:	BOOL;
+	In2 	:	BOOL;
+	In3 	:	BOOL;
+	In4 	:	BOOL;
+	In5 	:	BOOL;
+	In6 	:	BOOL;
+	In7 	:	BOOL;
+	
+	In8 	:	BOOL;
+	In9 	:	BOOL;
+	In10 	:	BOOL;
+	In11 	:	BOOL;
+	In12 	:	BOOL;
+	In13 	:	BOOL;
+	In14 	:	BOOL;
+	In15 	:	BOOL;
+	
+	TaskName : WSTRING := "Null Task";
+	CaseNum  : INT := 0;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
