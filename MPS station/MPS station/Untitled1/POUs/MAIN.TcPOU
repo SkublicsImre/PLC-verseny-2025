@@ -9,12 +9,12 @@ END_VAR
     <Implementation>
       <ST><![CDATA[INMODE(); 
 CASE GIOL.CaseNum OF
-	0:GIOL.TaskName:="First Tsak";
-	10:GIOL.TaskName:="Second Tsak";
-	20:GIOL.TaskName:="Third Tsak";
-	30:GIOL.TaskName:="Fourth Tsak";
-	40:GIOL.TaskName:="Fifth Tsak";
-	50:GIOL.TaskName:="Sixth Tsak";
+	0:GIOL.TaskName:="First Task";
+	10:GIOL.TaskName:="Second Task";
+	20:GIOL.TaskName:="Third Task";
+	30:GIOL.TaskName:="Fourth Task";
+	40:GIOL.TaskName:="Fifth Task";
+	50:GIOL.TaskName:="Sixth Task";
 	ELSE
 		GIOL.CaseNum:=0;
 END_CASE
