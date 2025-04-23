@@ -133,8 +133,8 @@ CASE GIOL.CaseNum OF
 		END_IF
 		
 	40:GIOL.TaskName:="Give Robot load command";
-		RobotCOM0 := 1;
-		RobotCOM1 := 0;
+		RobotCOM0 := 0;
+		RobotCOM1 := 1;
 		GIOL.CaseNum := 50;
 		
 	50:GIOL.TaskName:="Load workpiece into furnace";
@@ -160,6 +160,7 @@ CASE GIOL.CaseNum OF
 			PulseTime:=T#2S;
 			PulseSIGNAL:=TRUE;
 			GIOL.CaseNum := 62;
+			ReaderTrigger:=FALSE;
 		END_IF
 		
 	62:GIOL.TaskName:="Identify workpiece";
@@ -173,11 +174,11 @@ CASE GIOL.CaseNum OF
 		END_IF
 		
 		IF NOT CodeReader0 AND CodeReader1 THEN
-			FurnaceBurntime := T#1500MS;
+			FurnaceBurntime := T#5000MS;
 			GIOL.CaseNum := 70;
 		END_IF
 		IF CodeReader0 AND NOT CodeReader1 THEN
-			FurnaceBurntime := T#5000MS;
+			FurnaceBurntime := T#1500MS;
 			GIOL.CaseNum := 70;
 		END_IF
 		IF CodeReader0 AND CodeReader1 THEN
@@ -284,9 +285,18 @@ CASE GIOL.CaseNum OF
 			DelayONtrigger:=FALSE;
 			ManipulatorVacuumON:=FALSE;
 			ManipulatorZDOWN:=FALSE;
+			DelayAmount:=T#500MS;
+			GIOL.CaseNum:=105;
+		END_IF
+		
+	105:GIOL.TaskName:="Wait for putdown";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
 			CircTableRight:=TRUE;
+			DelayONtrigger:=FALSE;
 			GIOL.CaseNum:=110;
 		END_IF
+		
 		
 	110:GIOL.TaskName:="SAW Operation";
 		IF CircularTablePosition3 THEN
@@ -354,7 +364,7 @@ CASE GIOL.CaseNum OF
 		
 	160:GIOL.TaskName:="Finished task";
 		GIOL.CaseNum:=10;
-		
+	
 	ELSE
 		GIOL.CaseNum:=0;
 END_CASE
@@ -374,7 +384,6 @@ ELSE
 	ReaderTrigger := 0;
 	ManipulatorVacuumON := 0;
 	ManipulatorZDOWN := 0;
-	FurnaceDoorUP := 1;
 	CircularEJECT := 0;
 END_IF
 //some random change
@@ -451,6 +460,7 @@ END_IF
       <LineId Id="299" Count="1" />
       <LineId Id="353" Count="0" />
       <LineId Id="355" Count="1" />
+      <LineId Id="589" Count="0" />
       <LineId Id="354" Count="0" />
       <LineId Id="359" Count="0" />
       <LineId Id="357" Count="1" />
@@ -530,9 +540,16 @@ END_IF
       <LineId Id="473" Count="0" />
       <LineId Id="481" Count="4" />
       <LineId Id="488" Count="1" />
-      <LineId Id="509" Count="0" />
+      <LineId Id="599" Count="0" />
       <LineId Id="490" Count="0" />
       <LineId Id="486" Count="0" />
+      <LineId Id="590" Count="1" />
+      <LineId Id="593" Count="0" />
+      <LineId Id="600" Count="1" />
+      <LineId Id="604" Count="0" />
+      <LineId Id="603" Count="0" />
+      <LineId Id="602" Count="0" />
+      <LineId Id="596" Count="0" />
       <LineId Id="506" Count="2" />
       <LineId Id="510" Count="0" />
       <LineId Id="512" Count="3" />
@@ -589,7 +606,7 @@ END_IF
       <LineId Id="262" Count="0" />
       <LineId Id="213" Count="0" />
       <LineId Id="220" Count="0" />
-      <LineId Id="215" Count="2" />
+      <LineId Id="215" Count="1" />
       <LineId Id="202" Count="0" />
       <LineId Id="90" Count="0" />
       <LineId Id="89" Count="0" />
