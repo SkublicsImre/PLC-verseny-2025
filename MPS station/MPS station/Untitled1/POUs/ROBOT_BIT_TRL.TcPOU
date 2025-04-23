@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="ROBOT_BIT_TRL" Id="{444280b1-f2b5-4491-bf24-e44eef5bce93}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ROBOT_BIT_TRL
+VAR_INPUT
+	ROBPOZ : INT; // Robot pozíció száma
+	
+END_VAR
+
+VAR_OUTPUT
+	POZ1 :BOOL; //Kimenet bit MSB
+	POZ2 :BOOL; //Kimenet
+	POZ3 :BOOL; //Kimenet
+	
+END_VAR
+VAR
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE ROBPOZ OF
+0:
+POZ1 := 0;
+POZ2 := 0;
+POZ3 :=0;
+
+1:
+POZ1 := 1;
+POZ2 :=0;
+POZ3 :=0;
+
+2:
+POZ1 :=0;
+POZ2 :=1;
+POZ3 :=0;
+
+3:
+POZ1 :=1;
+POZ2 :=1;
+POZ3 :=0;
+
+4:
+POZ1 :=0;
+POZ2 :=0;
+POZ3 :=1;
+
+5:
+POZ1 :=1;
+POZ2 :=0;
+POZ3 :=1;
+
+6:
+POZ1 :=0;
+POZ2 :=1;
+POZ3 :=1;
+
+7:
+POZ1 :=1;
+POZ2 :=1;
+POZ3 :=1;
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="ROBOT_BIT_TRL">
+      <LineId Id="9" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="45" Count="2" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="49" Count="1" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="56" Count="1" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="61" Count="1" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="68" Count="1" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="70" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="29" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="BINARY_TO_DEC" Id="{020b1aef-5911-45e8-82a8-d58a78ccd987}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK BINARY_TO_DEC
+VAR_INPUT
+	BIN0 : BOOL; //Bemenet MSB
+	BIN1 : BOOL; //Bemenet
+	BIN2 : BOOL; //Bemenet 
+END_VAR
+VAR_OUTPUT
+	ID : INT; // kimeneti int
+	
+END_VAR
+VAR
+	bH : ARRAY [0..2] OF  INT; // helyiértékek értékei
+	i : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+FOR i :=0 TO 2 DO
+	bH[i] :=(LREAL_TO_INT( EXPT(2,i)));
+	
+END_FOR
+ID := (BOOL_TO_INT(BIN0)* bH[0])+ BOOL_TO_INT(BIN1)*bH[1]+BOOL_TO_INT(BIN2)*bH[2];
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="BINARY_TO_DEC">
+      <LineId Id="31" Count="0" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
