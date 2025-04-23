@@ -4,32 +4,263 @@
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
 	INMODE : INMODE;
+	
+	CircularTablePosition1 : BOOL;
+	CircularTablePosition2 : BOOL;
+	CircularTablePosition3 : BOOL;
+	PickupPointOccupied : BOOL; //NC gives back 1 when empty
+	ManipulatorCircularEND : BOOL;
+	ManipulatorFurnaceEND : BOOL;
+	FurnaceIN : BOOL;
+	FurnaceOUT : BOOL;
+	FurnaceNotFULL : BOOL; //NC gives back 1 when empty
+	CodeReader0 :  BOOL;
+	CodeReader1 :  BOOL;
+	StartButton : BOOL; //NO gives back 0 when not pressed
+	SYSTEM_OK : BOOL;
+	InConveyorOccupied : BOOL; //NO Gives back 0 when empty
+	RobotIN_task_IN_Progress : BOOL;
+	RobotOUT_task_IN_Progress : BOOL;
+	
+	CircTableRight : BOOL;
+	CircTableLeft  : BOOL;
+	PickupMotorGO : BOOL;
+	SawMotor : BOOL;
+	FurnaceGOin : BOOL;
+	FurnaceGOout : BOOL;
+	ManipulatorGOtoFurnace : BOOL;
+	ManipulatorGOtoCircular : BOOL;
+	FurnaceON : BOOL;
+	ReaderTrigger : BOOL;
+	ManipulatorVacuumON : BOOL; //monostabil
+	ManipulatorZDOWN : BOOL; //monostabil!!!!!!
+	FurnaceDoorDOWN :BOOL; //monostabil!!!!
+ 	RobotCOM0 : BOOL;
+	RobotCOM1 : BOOL;
+	CircularEJECT : BOOL; //monostabil!!!
+	DelayTimer : TON;
+	DelayAmount : TIME;
+	DelayONtrigger : BOOL;
+	FallTrig : F_TRIG;
+	FallTrigCLK : BOOL;
+	Pulse : Pulse;
+	PulseSIGNAL : BOOL; 
+	PulseTime : TIME;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[INMODE(); 
+DelayTimer(IN:=DelayONtrigger,PT:=DelayAmount);
+FallTrig(CLK:=FallTrigCLK);
+Pulse(SIGNAL:=PulseSIGNAL,Pulse_time:=PulseTime);
+CircularTablePosition1 := GIOL.In0;
+CircularTablePosition2 := GIOL.In1;
+CircularTablePosition3 := GIOL.In3;
+PickupPointOccupied := GIOL.In2;
+ManipulatorCircularEND := GIOL.In4;
+ManipulatorFurnaceEND := GIOL.In7;
+FurnaceIN := GIOL.In5;
+FurnaceOUT := GIOL.In6;
+FurnaceNotFULL := GIOL.In8;
+CodeReader0 := GIOL.In9;
+CodeReader1 := GIOL.In10;
+StartButton := GIOL.In11;
+SYSTEM_OK := GIOL.In12;
+InConveyorOccupied := GIOL.In13;
+RobotIN_task_IN_Progress := GIOL.In14;
+RobotOUT_task_IN_Progress := GIOL.In15;
+
+GIOL.Out0 := CircTableRight;
+GIOL.Out1 := CircTableLeft;
+GIOL.Out2 := PickupMotorGO;
+GIOL.Out3 := SawMotor;
+GIOL.Out4 := FurnaceGOin;
+GIOL.Out5 := FurnaceGOout;
+GIOL.Out6 := ManipulatorGOtoFurnace;
+GIOL.Out7 := ManipulatorGOtoCircular;
+GIOL.Out8 := FurnaceON;
+GIOL.Out9 := ReaderTrigger;
+GIOL.Out10 := ManipulatorVacuumON;
+GIOL.Out11 := ManipulatorZDOWN;
+GIOL.Out12 := FurnaceDoorDOWN;
+GIOL.Out13 := RobotCOM0;
+GIOL.Out14 := RobotCOM1;
+GIOL.Out15 := CircularEJECT;
+
+IF SYSTEM_OK THEN
 CASE GIOL.CaseNum OF
-	0:GIOL.TaskName:="First Task";
-	10:GIOL.TaskName:="Second Task";
-	20:GIOL.TaskName:="Third Task";
-	30:GIOL.TaskName:="Fourth Task";
-	40:GIOL.TaskName:="Fifth Task";
-	50:GIOL.TaskName:="Sixth Task";
+	
+	0:GIOL.TaskName:="Idle position, wait for start button";
+		IF StartButton THEN
+			GIOL.CaseNum:=10;
+		END_IF
+		
+	10:GIOL.TaskName:="Check for workpiece on inconveyor";
+		IF InConveyorOccupied AND FurnaceNotFULL THEN
+			DelayAmount := T#1S;
+			GIOL.CaseNum := 20;
+		END_IF
+		
+	20:GIOL.TaskName:="Wait for 1 sec";
+		DelayONtrigger := TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger := FALSE;
+			GIOL.CaseNum:=30;
+		END_IF
+		
+	30:GIOL.TaskName:="Open furnace if in";
+		IF FurnaceOUT THEN
+			GIOL.CaseNum := 40;
+		ELSE
+			FurnaceGOout := TRUE;
+			FurnaceGOin :=FALSE;
+			DelayAmount := T#4S;
+			GIOL.CaseNum := 35;
+		END_IF
+		
+	35:GIOL.TaskName:="Open Furnace";
+		DelayONtrigger := TRUE;
+		IF DelayTimer.Q THEN
+			GIOL.CaseNum := 40;
+			DelayONtrigger := FALSE;
+		END_IF
+		
+	40:GIOL.TaskName:="Give Robot load command";
+		RobotCOM0 := 1;
+		RobotCOM1 := 0;
+		GIOL.CaseNum := 50;
+		
+	50:GIOL.TaskName:="Load workpiece into furnace";
+		FallTrigCLK := RobotIN_task_IN_Progress;
+		IF RobotIN_task_IN_Progress THEN
+			RobotCOM0 := 0;
+			RobotCOM1 := 0;
+		END_IF
+		IF FallTrig.Q THEN
+			GIOL.CaseNum := 60;
+		END_IF
+		
+	60:GIOL.TaskName:="Identify workpiece";
+		IF NOT FurnaceNotFULL THEN
+			FurnaceDoorDOWN := TRUE;
+			ReaderTrigger := TRUE;
+			PulseTime:=T#250MS;
+			PulseSIGNAL:=TRUE;
+			GIOL.CaseNum:=61;
+		END_IF
+	
+	61:GIOL.TaskName:="Identify workpiece";
+		
+	
+	
 	ELSE
 		GIOL.CaseNum:=0;
 END_CASE
-
+ELSE
+	GIOL.CaseNum := 0;
+	CircTableRight := 0;
+	CircTableLeft := 0;
+	PickupMotorGO := 0;
+	SawMotor := 0;
+	FurnaceGOin := 0;
+	FurnaceGOout := 0;
+	ManipulatorGOtoFurnace := 0;
+	ManipulatorGOtoCircular := 0;
+	RobotCOM0 := 0;
+	RobotCOM1 :=0;
+	FurnaceON := 0;
+	ReaderTrigger := 0;
+	ManipulatorVacuumON := 0;
+	ManipulatorZDOWN := 0;
+	FurnaceDoorUP := 0;
+	CircularEJECT := 0;
+END_IF
 //some random change
 ]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="69" Count="0" />
-      <LineId Id="75" Count="1" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="270" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="127" Count="3" />
+      <LineId Id="133" Count="2" />
+      <LineId Id="137" Count="6" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="157" Count="6" />
+      <LineId Id="165" Count="6" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="223" Count="0" />
       <LineId Id="79" Count="0" />
-      <LineId Id="81" Count="3" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="236" Count="1" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="241" Count="0" />
+      <LineId Id="243" Count="0" />
+      <LineId Id="246" Count="1" />
+      <LineId Id="263" Count="0" />
+      <LineId Id="248" Count="1" />
+      <LineId Id="244" Count="1" />
+      <LineId Id="242" Count="0" />
+      <LineId Id="250" Count="2" />
+      <LineId Id="254" Count="0" />
+      <LineId Id="253" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="255" Count="1" />
+      <LineId Id="258" Count="1" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="271" Count="0" />
+      <LineId Id="279" Count="1" />
+      <LineId Id="282" Count="0" />
+      <LineId Id="281" Count="0" />
+      <LineId Id="261" Count="0" />
+      <LineId Id="274" Count="0" />
+      <LineId Id="265" Count="0" />
+      <LineId Id="275" Count="1" />
+      <LineId Id="286" Count="0" />
+      <LineId Id="283" Count="0" />
+      <LineId Id="289" Count="0" />
+      <LineId Id="291" Count="0" />
+      <LineId Id="297" Count="1" />
+      <LineId Id="287" Count="0" />
+      <LineId Id="285" Count="0" />
+      <LineId Id="299" Count="1" />
+      <LineId Id="302" Count="1" />
       <LineId Id="78" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="77" Count="0" />
+      <LineId Id="200" Count="1" />
+      <LineId Id="203" Count="1" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="206" Count="4" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="213" Count="0" />
+      <LineId Id="220" Count="0" />
+      <LineId Id="215" Count="2" />
+      <LineId Id="202" Count="0" />
       <LineId Id="90" Count="0" />
       <LineId Id="89" Count="0" />
       <LineId Id="91" Count="0" />
