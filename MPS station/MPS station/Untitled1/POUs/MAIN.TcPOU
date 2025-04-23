@@ -374,7 +374,7 @@ ELSE
 	ReaderTrigger := 0;
 	ManipulatorVacuumON := 0;
 	ManipulatorZDOWN := 0;
-	FurnaceDoorUP := 0;
+	FurnaceDoorUP := 1;
 	CircularEJECT := 0;
 END_IF
 //some random change
