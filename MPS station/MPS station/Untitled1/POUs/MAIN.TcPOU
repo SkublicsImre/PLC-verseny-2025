@@ -150,7 +150,7 @@ CASE GIOL.CaseNum OF
 	60:GIOL.TaskName:="Identify workpiece";
 		IF NOT FurnaceNotFULL THEN
 			ReaderTrigger := TRUE;
-			PulseTime:=T#250MS;
+			PulseTime:=T#400MS;
 			PulseSIGNAL:=TRUE;
 			GIOL.CaseNum:=61;
 		END_IF
