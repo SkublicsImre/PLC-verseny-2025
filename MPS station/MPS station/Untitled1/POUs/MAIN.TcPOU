@@ -34,7 +34,7 @@ VAR
 	ReaderTrigger : BOOL;
 	ManipulatorVacuumON : BOOL; //monostabil
 	ManipulatorZDOWN : BOOL; //monostabil!!!!!!
-	FurnaceDoorDOWN :BOOL; //monostabil!!!!
+	FurnaceDoorUP :BOOL :=TRUE; //monostabil!!!!
  	RobotCOM0 : BOOL;
 	RobotCOM1 : BOOL;
 	CircularEJECT : BOOL; //monostabil!!!
@@ -46,6 +46,9 @@ VAR
 	Pulse : Pulse;
 	PulseSIGNAL : BOOL; 
 	PulseTime : TIME;
+	
+	ScanCounter :INT := 0;
+	FurnaceBurntime : TIME;
 	
 END_VAR
 ]]></Declaration>
@@ -83,7 +86,7 @@ GIOL.Out8 := FurnaceON;
 GIOL.Out9 := ReaderTrigger;
 GIOL.Out10 := ManipulatorVacuumON;
 GIOL.Out11 := ManipulatorZDOWN;
-GIOL.Out12 := FurnaceDoorDOWN;
+GIOL.Out12 := FurnaceDoorUP;
 GIOL.Out13 := RobotCOM0;
 GIOL.Out14 := RobotCOM1;
 GIOL.Out15 := CircularEJECT;
@@ -100,6 +103,8 @@ CASE GIOL.CaseNum OF
 		IF InConveyorOccupied AND FurnaceNotFULL THEN
 			DelayAmount := T#1S;
 			GIOL.CaseNum := 20;
+		ELSE 
+			GIOL.CaseNum:=0;
 		END_IF
 		
 	20:GIOL.TaskName:="Wait for 1 sec";
@@ -124,6 +129,7 @@ CASE GIOL.CaseNum OF
 		IF DelayTimer.Q THEN
 			GIOL.CaseNum := 40;
 			DelayONtrigger := FALSE;
+			FurnaceGOin := FALSE;
 		END_IF
 		
 	40:GIOL.TaskName:="Give Robot load command";
@@ -143,7 +149,6 @@ CASE GIOL.CaseNum OF
 		
 	60:GIOL.TaskName:="Identify workpiece";
 		IF NOT FurnaceNotFULL THEN
-			FurnaceDoorDOWN := TRUE;
 			ReaderTrigger := TRUE;
 			PulseTime:=T#250MS;
 			PulseSIGNAL:=TRUE;
@@ -151,9 +156,205 @@ CASE GIOL.CaseNum OF
 		END_IF
 	
 	61:GIOL.TaskName:="Identify workpiece";
+		IF NOT PulseSIGNAL THEN
+			PulseTime:=T#2S;
+			PulseSIGNAL:=TRUE;
+			GIOL.CaseNum := 62;
+		END_IF
 		
+	62:GIOL.TaskName:="Identify workpiece";
+		IF NOT PulseSIGNAL AND NOT CodeReader0 AND NOT CodeReader1 THEN
+			ScanCounter := ScanCounter + 1;
+			GIOL.CaseNum:=60;
+			IF ScanCounter = 2 THEN
+				GIOL.CaseNum:=0;
+				ScanCounter:=0;
+			END_IF
+		END_IF
+		
+		IF NOT CodeReader0 AND CodeReader1 THEN
+			FurnaceBurntime := T#1500MS;
+			GIOL.CaseNum := 70;
+		END_IF
+		IF CodeReader0 AND NOT CodeReader1 THEN
+			FurnaceBurntime := T#5000MS;
+			GIOL.CaseNum := 70;
+		END_IF
+		IF CodeReader0 AND CodeReader1 THEN
+			FurnaceBurntime := T#3000MS;
+			GIOL.CaseNum := 70;
+		END_IF
 	
+	70:GIOL.TaskName:="Pull workpiece into furnace";
+		FurnaceGOin:=TRUE;
+		FurnaceGOout:=FALSE;	
+		GIOL.CaseNum:=71;
+		ScanCounter:=0;
+		
+	71:GIOL.TaskName:="Pull workpiece into furnace";
+		IF FurnaceIN THEN
+			FurnaceGOin:=FALSE;
+			FurnaceGOout:=FALSE;
+			FurnaceDoorUP:=FALSE;
+			DelayAmount:=T#1S;
+			GIOL.CaseNum:=72;
+		END_IF
+	72:GIOL.TaskName:="Close furnace door";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			GIOL.CaseNum:=73;
+			FurnaceON:=TRUE;
+			DelayAmount:=FurnaceBurntime;
+		END_IF
+	73:GIOL.TaskName:="BURN!!!!";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			FurnaceON:=FALSE;
+			FurnaceDoorUP:=TRUE;
+			DelayAmount:=T#1S;
+			GIOL.CaseNum:=80;
+		END_IF
+		
+	80:GIOL.TaskName:="Open furnace door";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			FurnaceGOout:=TRUE;
+			FurnaceGOin:=FALSE;
+			GIOL.CaseNum:=90;
+		END_IF
+		
+	90:GIOL.TaskName:="Send out workpiece";
+		IF FurnaceOUT THEN
+			ManipulatorGOtoFurnace:=TRUE;
+			ManipulatorGOtoCircular:=FALSE;
+			IF CircularTablePosition1 THEN
+				GIOL.CaseNum:=100;
+			ELSE
+				GIOL.CaseNum:=91;
+				CircTableLeft:=TRUE;
+			END_IF			
+		END_IF
+		
+	91:GIOL.TaskName:="Adjust circular table";
+		IF CircularTablePosition1 THEN
+			CircTableLeft := FALSE;
+			GIOL.CaseNum  := 100;
+		END_IF
+		
+	100:GIOL.TaskName:="Take workpiece to table";
+		IF ManipulatorFurnaceEND THEN
+			ManipulatorGOtoFurnace:=FALSE;
+			ManipulatorGOtoCircular:=FALSE;
+			ManipulatorZDOWN:=TRUE;
+			ManipulatorVacuumON:=TRUE;
+			DelayAmount:=T#1S;
+			GIOL.CaseNum:=101;
+		END_IF
+		
+	101:GIOL.TaskName:="Take workpiece to table";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			ManipulatorZDOWN:=FALSE;
+			DelayAmount := T#500MS;
+			GIOL.CaseNum:=102;
+		END_IF
+		
+	102:GIOL.TaskName:="Take workpiece to table";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			ManipulatorGOtoCircular:=TRUE;
+			GIOL.CaseNum:=103;
+		END_IF
+		
+	103:GIOL.TaskName:="Take workpiece to table";
+		IF ManipulatorCircularEND THEN
+			ManipulatorZDOWN:=TRUE;
+			DelayAmount:=T#500MS;
+			GIOL.CaseNum:=104;
+		END_IF
+		
+	104:GIOL.TaskName:="Take workpiece to table";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			ManipulatorVacuumON:=FALSE;
+			ManipulatorZDOWN:=FALSE;
+			CircTableRight:=TRUE;
+			GIOL.CaseNum:=110;
+		END_IF
+		
+	110:GIOL.TaskName:="SAW Operation";
+		IF CircularTablePosition3 THEN
+			CircTableRight:=FALSE;
+			SawMotor:=TRUE;
+			DelayAmount:=T#2S;
+			GIOL.CaseNum:=111;
+		END_IF
 	
+	111:GIOL.TaskName:="SAW Operation";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			SawMotor:=FALSE;
+			CircTableRight:=TRUE;
+			GIOL.CaseNum:=120;
+		END_IF
+		
+	120:GIOL.TaskName:="SAW Operation";
+		IF CircularTablePosition2 THEN
+			CircTableRight:=FALSE;
+			DelayAmount:=T#500MS;
+			GIOL.CaseNum:=130;
+		END_IF
+		
+	130:GIOL.TaskName:="Eject workpiece from table";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			CircularEJECT:=TRUE;
+			DelayAmount:=T#1000MS;
+			GIOL.CaseNum:=131;
+		END_IF
+		
+	131:GIOL.TaskName:="Eject workpiece from table";
+		DelayONtrigger:=TRUE;
+		IF DelayTimer.Q THEN
+			DelayONtrigger:=FALSE;
+			CircularEJECT:=FALSE;
+			PickupMotorGO:=TRUE;
+			CircTableLeft:=TRUE;
+			GIOL.CaseNum:=140;
+		END_IF
+		
+	140:GIOL.TaskName:="Take workpiece to pickup point";
+		IF NOT PickupPointOccupied THEN
+			PickupMotorGO:=FALSE;
+		END_IF
+		IF CircularTablePosition1 THEN 
+			CircTableLeft:=FALSE;
+			RobotCOM0:=1;
+			RobotCOM1:=1;
+			GIOL.CaseNum:=150;
+		END_IF
+			
+	150:GIOL.TaskName:="Take workpiece to endpoint";
+		FallTrigCLK :=  RobotOUT_task_IN_Progress;
+		IF RobotOUT_task_IN_Progress THEN
+			RobotCOM0 := 0;
+			RobotCOM1 := 0;
+		END_IF
+		IF FallTrig.Q THEN
+			GIOL.CaseNum := 160;
+		END_IF
+		
+	160:GIOL.TaskName:="Finished task";
+		GIOL.CaseNum:=10;
+		
 	ELSE
 		GIOL.CaseNum:=0;
 END_CASE
@@ -207,6 +408,7 @@ END_IF
       <LineId Id="222" Count="0" />
       <LineId Id="225" Count="0" />
       <LineId Id="233" Count="0" />
+      <LineId Id="572" Count="1" />
       <LineId Id="226" Count="0" />
       <LineId Id="234" Count="0" />
       <LineId Id="81" Count="0" />
@@ -225,6 +427,7 @@ END_IF
       <LineId Id="242" Count="0" />
       <LineId Id="250" Count="2" />
       <LineId Id="254" Count="0" />
+      <LineId Id="385" Count="0" />
       <LineId Id="253" Count="0" />
       <LineId Id="260" Count="0" />
       <LineId Id="83" Count="0" />
@@ -240,14 +443,141 @@ END_IF
       <LineId Id="265" Count="0" />
       <LineId Id="275" Count="1" />
       <LineId Id="286" Count="0" />
-      <LineId Id="283" Count="0" />
       <LineId Id="289" Count="0" />
       <LineId Id="291" Count="0" />
       <LineId Id="297" Count="1" />
       <LineId Id="287" Count="0" />
       <LineId Id="285" Count="0" />
       <LineId Id="299" Count="1" />
-      <LineId Id="302" Count="1" />
+      <LineId Id="353" Count="0" />
+      <LineId Id="355" Count="1" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="359" Count="0" />
+      <LineId Id="357" Count="1" />
+      <LineId Id="408" Count="0" />
+      <LineId Id="414" Count="0" />
+      <LineId Id="409" Count="1" />
+      <LineId Id="412" Count="0" />
+      <LineId Id="411" Count="0" />
+      <LineId Id="361" Count="0" />
+      <LineId Id="370" Count="0" />
+      <LineId Id="302" Count="0" />
+      <LineId Id="362" Count="0" />
+      <LineId Id="372" Count="0" />
+      <LineId Id="363" Count="0" />
+      <LineId Id="365" Count="1" />
+      <LineId Id="373" Count="0" />
+      <LineId Id="364" Count="0" />
+      <LineId Id="368" Count="1" />
+      <LineId Id="374" Count="0" />
+      <LineId Id="367" Count="0" />
+      <LineId Id="303" Count="0" />
+      <LineId Id="376" Count="3" />
+      <LineId Id="413" Count="0" />
+      <LineId Id="380" Count="1" />
+      <LineId Id="375" Count="0" />
+      <LineId Id="382" Count="0" />
+      <LineId Id="384" Count="0" />
+      <LineId Id="386" Count="6" />
+      <LineId Id="396" Count="0" />
+      <LineId Id="393" Count="2" />
+      <LineId Id="383" Count="0" />
+      <LineId Id="397" Count="1" />
+      <LineId Id="400" Count="1" />
+      <LineId Id="403" Count="1" />
+      <LineId Id="415" Count="2" />
+      <LineId Id="419" Count="0" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="402" Count="0" />
+      <LineId Id="420" Count="1" />
+      <LineId Id="424" Count="1" />
+      <LineId Id="423" Count="0" />
+      <LineId Id="422" Count="0" />
+      <LineId Id="431" Count="2" />
+      <LineId Id="440" Count="0" />
+      <LineId Id="442" Count="0" />
+      <LineId Id="497" Count="0" />
+      <LineId Id="443" Count="0" />
+      <LineId Id="498" Count="0" />
+      <LineId Id="500" Count="0" />
+      <LineId Id="502" Count="0" />
+      <LineId Id="499" Count="0" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="495" Count="1" />
+      <LineId Id="501" Count="0" />
+      <LineId Id="503" Count="0" />
+      <LineId Id="505" Count="0" />
+      <LineId Id="504" Count="0" />
+      <LineId Id="436" Count="2" />
+      <LineId Id="444" Count="0" />
+      <LineId Id="446" Count="4" />
+      <LineId Id="445" Count="0" />
+      <LineId Id="452" Count="0" />
+      <LineId Id="439" Count="0" />
+      <LineId Id="451" Count="0" />
+      <LineId Id="453" Count="1" />
+      <LineId Id="456" Count="2" />
+      <LineId Id="455" Count="0" />
+      <LineId Id="460" Count="4" />
+      <LineId Id="466" Count="0" />
+      <LineId Id="468" Count="0" />
+      <LineId Id="465" Count="0" />
+      <LineId Id="469" Count="1" />
+      <LineId Id="475" Count="0" />
+      <LineId Id="478" Count="0" />
+      <LineId Id="480" Count="0" />
+      <LineId Id="477" Count="0" />
+      <LineId Id="473" Count="0" />
+      <LineId Id="481" Count="4" />
+      <LineId Id="488" Count="1" />
+      <LineId Id="509" Count="0" />
+      <LineId Id="490" Count="0" />
+      <LineId Id="486" Count="0" />
+      <LineId Id="506" Count="2" />
+      <LineId Id="510" Count="0" />
+      <LineId Id="512" Count="3" />
+      <LineId Id="518" Count="0" />
+      <LineId Id="516" Count="0" />
+      <LineId Id="511" Count="0" />
+      <LineId Id="519" Count="1" />
+      <LineId Id="522" Count="0" />
+      <LineId Id="524" Count="0" />
+      <LineId Id="523" Count="0" />
+      <LineId Id="521" Count="0" />
+      <LineId Id="526" Count="0" />
+      <LineId Id="525" Count="0" />
+      <LineId Id="527" Count="0" />
+      <LineId Id="529" Count="0" />
+      <LineId Id="532" Count="1" />
+      <LineId Id="530" Count="0" />
+      <LineId Id="534" Count="0" />
+      <LineId Id="528" Count="0" />
+      <LineId Id="535" Count="0" />
+      <LineId Id="537" Count="0" />
+      <LineId Id="539" Count="0" />
+      <LineId Id="536" Count="0" />
+      <LineId Id="541" Count="0" />
+      <LineId Id="540" Count="0" />
+      <LineId Id="538" Count="0" />
+      <LineId Id="543" Count="0" />
+      <LineId Id="542" Count="0" />
+      <LineId Id="544" Count="2" />
+      <LineId Id="548" Count="1" />
+      <LineId Id="576" Count="0" />
+      <LineId Id="550" Count="0" />
+      <LineId Id="547" Count="0" />
+      <LineId Id="577" Count="0" />
+      <LineId Id="551" Count="2" />
+      <LineId Id="578" Count="1" />
+      <LineId Id="585" Count="1" />
+      <LineId Id="556" Count="0" />
+      <LineId Id="558" Count="0" />
+      <LineId Id="554" Count="0" />
+      <LineId Id="559" Count="1" />
+      <LineId Id="562" Count="6" />
+      <LineId Id="561" Count="0" />
+      <LineId Id="569" Count="1" />
+      <LineId Id="574" Count="1" />
       <LineId Id="78" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="77" Count="0" />
