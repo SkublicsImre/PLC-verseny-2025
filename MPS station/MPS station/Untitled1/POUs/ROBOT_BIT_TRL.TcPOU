@@ -10,7 +10,7 @@ END_VAR
 VAR_OUTPUT
 	POZ1 :BOOL; //Kimenet bit MSB
 	POZ2 :BOOL; //Kimenet
-	POZ3 :BOOL; //Kimenet
+	
 	
 END_VAR
 VAR
@@ -22,42 +22,20 @@ END_VAR
 0:
 POZ1 := 0;
 POZ2 := 0;
-POZ3 :=0;
+
 
 1:
 POZ1 := 1;
 POZ2 :=0;
-POZ3 :=0;
+
 
 2:
 POZ1 :=0;
 POZ2 :=1;
-POZ3 :=0;
 
 3:
 POZ1 :=1;
 POZ2 :=1;
-POZ3 :=0;
-
-4:
-POZ1 :=0;
-POZ2 :=0;
-POZ3 :=1;
-
-5:
-POZ1 :=1;
-POZ2 :=0;
-POZ3 :=1;
-
-6:
-POZ1 :=0;
-POZ2 :=1;
-POZ3 :=1;
-
-7:
-POZ1 :=1;
-POZ2 :=1;
-POZ3 :=1;
 
 END_CASE]]></ST>
     </Implementation>
@@ -72,28 +50,10 @@ END_CASE]]></ST>
       <LineId Id="34" Count="0" />
       <LineId Id="33" Count="0" />
       <LineId Id="56" Count="1" />
-      <LineId Id="55" Count="0" />
       <LineId Id="36" Count="0" />
       <LineId Id="35" Count="0" />
       <LineId Id="59" Count="1" />
-      <LineId Id="58" Count="0" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="37" Count="0" />
-      <LineId Id="61" Count="1" />
-      <LineId Id="40" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="39" Count="0" />
-      <LineId Id="64" Count="1" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="66" Count="0" />
-      <LineId Id="41" Count="0" />
-      <LineId Id="68" Count="1" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="44" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="70" Count="1" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="72" Count="0" />
+      <LineId Id="109" Count="0" />
       <LineId Id="29" Count="0" />
     </LineIds>
   </POU>
