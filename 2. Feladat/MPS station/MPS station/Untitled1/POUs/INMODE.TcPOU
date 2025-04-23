@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="INMODE" Id="{f5f086ad-7018-4f63-9afd-40ebcbb00a7c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK INMODE
+VAR_INPUT
+	INState : BOOL :=  FALSE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF INState THEN
+	GIOL.In0 := GIOL.bIn0;
+	GIOL.In1 := GIOL.bIn1;
+	GIOL.In2 := GIOL.bIn2;
+	GIOL.In3 := GIOL.bIn3;
+	GIOL.In4 := GIOL.bIn4;
+	GIOL.In5 := GIOL.bIn5;
+	GIOL.In6 := GIOL.bIn6;
+	GIOL.In7 := GIOL.bIn7;
+	
+	GIOL.In8 := GIOL.bIn8;
+	GIOL.In9 := GIOL.bIn9;
+	GIOL.In10 := GIOL.bIn10;
+	GIOL.In11 := GIOL.bIn11;
+	GIOL.In12 := GIOL.bIn12;
+	GIOL.In13 := GIOL.bIn13;
+	GIOL.In14 := GIOL.bIn14;
+	GIOL.In15 := GIOL.bIn15;
+ELSE
+	GIOL.In0 := GIOL.xIn0;
+	GIOL.In1 := GIOL.xIn1;
+	GIOL.In2 := GIOL.xIn2;
+	GIOL.In3 := GIOL.xIn3;
+	GIOL.In4 := GIOL.xIn4;
+	GIOL.In5 := GIOL.xIn5;
+	GIOL.In6 := GIOL.xIn6;
+	GIOL.In7 := GIOL.xIn7;
+	
+	GIOL.In8 := GIOL.xIn8;
+	GIOL.In9 := GIOL.xIn9;
+	GIOL.In10 := GIOL.xIn10;
+	GIOL.In11 := GIOL.xIn11;
+	GIOL.In12 := GIOL.xIn12;
+	GIOL.In13 := GIOL.xIn13;
+	GIOL.In14 := GIOL.xIn14;
+	GIOL.In15 := GIOL.xIn15;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="INMODE">
+      <LineId Id="9" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="31" Count="7" />
+      <LineId Id="40" Count="6" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="47" Count="15" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

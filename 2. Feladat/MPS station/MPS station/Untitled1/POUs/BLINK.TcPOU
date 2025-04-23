@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="BLINK" Id="{3dd4618a-ca30-425e-b982-aab11e04e1f4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK BLINK
+VAR_INPUT
+	TOGGLE : BOOL; // Indítja és leállítja a villogást
+	ON_TIME : TIME; // Bekapcsolva töltött idő
+	OFF_TIME : TIME; // Kikapcsolva töltött idő
+END_VAR
+VAR_OUTPUT
+	LED : BOOL; // A led változó ami villogni fog
+END_VAR
+VAR
+	clk1 :TON;
+	clk2 :TON;
+	i: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[clk1(PT:=ON_TIME);
+clk2(PT:=OFF_TIME);
+IF TOGGLE  THEN
+	CASE i OF
+
+0:
+LED := TRUE;
+clk1.IN := TRUE;
+clk2.IN := FALSE;
+IF clk1.Q THEN
+i :=1;  
+END_IF
+1:
+LED := FALSE;
+clk1.IN := FALSE;
+clk2.IN := TRUE;
+IF clk2.Q THEN
+	i := 0;
+END_IF
+	END_CASE
+ELSE
+		LED := FALSE;
+		i:=0;
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="BLINK">
+      <LineId Id="22" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="47" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="53" Count="4" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="21" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <GVL Name="GIOL" Id="{6708b966-6ed5-493d-8f12-b0bfd6bbe80c}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	xIn0 	AT%IX0.0:	BOOL;
+	xIn1 	AT%IX0.1:	BOOL;
+	xIn2 	AT%IX0.2:	BOOL;
+	xIn3 	AT%IX0.3:	BOOL;
+	xIn4 	AT%IX0.4:	BOOL;
+	xIn5 	AT%IX0.5:	BOOL;
+	xIn6 	AT%IX0.6:	BOOL;
+	xIn7 	AT%IX0.7:	BOOL;
+	
+	xIn8 	AT%IX1.0:	BOOL;
+	xIn9 	AT%IX1.1:	BOOL;
+	xIn10 	AT%IX1.2:	BOOL;
+	xIn11 	AT%IX1.3:	BOOL;
+	xIn12 	AT%IX1.4:	BOOL;
+	xIn13 	AT%IX1.5:	BOOL;
+	xIn14 	AT%IX1.6:	BOOL;
+	xIn15 	AT%IX1.7:	BOOL;
+	
+	Out0 	AT%QX0.0:	BOOL;
+	Out1 	AT%QX0.1:	BOOL;
+	Out2 	AT%QX0.2:	BOOL;
+	Out3 	AT%QX0.3:	BOOL;
+	Out4 	AT%QX0.4:	BOOL;
+	Out5 	AT%QX0.5:	BOOL;
+	Out6 	AT%QX0.6:	BOOL;
+	Out7 	AT%QX0.7:	BOOL;
+	
+	
+	Out8 	AT%QX1.0:	BOOL;
+	Out9 	AT%QX1.1:	BOOL;
+	Out10 	AT%QX1.2:	BOOL;
+	Out11 	AT%QX1.3:	BOOL;
+	Out12 	AT%QX1.4:	BOOL;
+	Out13 	AT%QX1.5:	BOOL;
+	Out14 	AT%QX1.6:	BOOL;
+	Out15 	AT%QX1.7:	BOOL;
+	
+	In0 	:	BOOL;
+	In1 	:	BOOL;
+	In2 	:	BOOL;
+	In3 	:	BOOL;
+	In4 	:	BOOL;
+	In5 	:	BOOL;
+	In6 	:	BOOL;
+	In7 	:	BOOL;
+	
+	In8 	:	BOOL;
+	In9 	:	BOOL;
+	In10 	:	BOOL;
+	In11 	:	BOOL;
+	In12 	:	BOOL;
+	In13 	:	BOOL;
+	In14 	:	BOOL;
+	In15 	:	BOOL;
+	
+	bIn0 	:	BOOL;
+	bIn1 	:	BOOL;
+	bIn2 	:	BOOL;
+	bIn3 	:	BOOL;
+	bIn4 	:	BOOL;
+	bIn5 	:	BOOL;
+	bIn6 	:	BOOL;
+	bIn7 	:	BOOL;
+	
+	bIn8 	:	BOOL;
+	bIn9 	:	BOOL;
+	bIn10 	:	BOOL;
+	bIn11 	:	BOOL;
+	bIn12 	:	BOOL;
+	bIn13 	:	BOOL;
+	bIn14 	:	BOOL;
+	bIn15 	:	BOOL;
+	
+	TaskName : WSTRING := "Null Task";
+	CaseNum  : INT := 0;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="MAIN" Id="{55f2dad4-fae0-4be3-a7be-b728afd4fa9e}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	INMODE : INMODE;
+	
+	DelayTimer : TON;
+	DelayAmount : TIME;
+	DelayONtrigger : BOOL;
+	FallTrig : F_TRIG;
+	FallTrigCLK : BOOL;
+	Pulse : Pulse;
+	PulseSIGNAL : BOOL; 
+	PulseTime : TIME;
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[INMODE(); 
+
+DelayTimer(IN:=DelayONtrigger,PT:=DelayAmount);
+FallTrig(CLK:=FallTrigCLK);
+Pulse(SIGNAL:=PulseSIGNAL,Pulse_time:=PulseTime);
+
+ := GIOL.In0;
+ := GIOL.In1;
+ := GIOL.In3;
+ := GIOL.In2;
+ := GIOL.In4;
+ := GIOL.In7;
+ := GIOL.In5;
+ := GIOL.In6;
+ := GIOL.In8;
+ := GIOL.In9;
+ := GIOL.In10;
+ := GIOL.In11;
+ := GIOL.In12;
+ := GIOL.In13;
+ := GIOL.In14;
+ := GIOL.In15;
+
+GIOL.Out0 :=
+GIOL.Out1 := 
+GIOL.Out2 :=
+GIOL.Out3 := 
+GIOL.Out4 := 
+GIOL.Out5 := 
+GIOL.Out6 := 
+GIOL.Out7 := 
+GIOL.Out8 :=
+GIOL.Out9 := 
+GIOL.Out10 := 
+GIOL.Out11 := 
+GIOL.Out12 := 
+GIOL.Out13 := 
+GIOL.Out14 := 
+GIOL.Out15 := 
+
+CASE GIOL.CaseNum OF
+	
+	0:GIOL.TaskName:="Idle position, wait for start button";
+	ELSE
+		GIOL.CaseNum:=0;
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="69" Count="0" />
+      <LineId Id="658" Count="0" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="270" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="657" Count="0" />
+      <LineId Id="127" Count="3" />
+      <LineId Id="133" Count="2" />
+      <LineId Id="137" Count="6" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="157" Count="6" />
+      <LineId Id="165" Count="4" />
+      <LineId Id="656" Count="0" />
+      <LineId Id="171" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="91" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
