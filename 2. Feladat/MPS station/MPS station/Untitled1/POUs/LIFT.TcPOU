@@ -70,12 +70,13 @@ CASE CaseN OF
 		LiftUp := 1;
 		LiftEnd := 1;
 		LayerCount := 0;   //Layer reset
-	IF LiftRun = 0 THEN
-		CaseN := 30;
-		LiftPos := 0;
-		
+		CaseN := 21;
 	
-	END_IF
+21: 
+		IF LiftRun = 0 THEN
+		LiftPos := 0;		
+		CaseN := 30;
+		END_IF
 30:						//Lift lemegy egy lépést
 	LiftDown:= 1;
 	CaseN:= 31;
@@ -189,10 +190,11 @@ END_CASE]]></ST>
       <LineId Id="25" Count="0" />
       <LineId Id="44" Count="2" />
       <LineId Id="146" Count="0" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="48" Count="0" />
+      <LineId Id="253" Count="0" />
       <LineId Id="59" Count="0" />
       <LineId Id="214" Count="0" />
+      <LineId Id="251" Count="0" />
+      <LineId Id="250" Count="0" />
       <LineId Id="50" Count="0" />
       <LineId Id="49" Count="0" />
       <LineId Id="21" Count="0" />
