@@ -4,9 +4,10 @@
     <Declaration><![CDATA[FUNCTION_BLOCK LIFT
 VAR_INPUT
 	LiftRun : BOOL;
-	PallettReady : BOOL;
-	PalettUNLOADED : BOOL;
-	LayerCount : INT;
+	DOOR_OPEN : BOOL;    //
+	RaklapInLift : BOOL; // I 0.6
+	
+	
 	//PalettLoaded : BOOL;
 END_VAR
 VAR_OUTPUT
@@ -15,6 +16,8 @@ VAR_OUTPUT
 	LiftEnd : BOOL;
 	LiftReady : BOOL;
 	LiftPos : INT;	
+	Raklap_IN : BOOL; //Raklap be szalag 
+	Raklap_OUT :BOOL; //Raklap ki szalag
 	
 END_VAR
 
@@ -23,31 +26,43 @@ END_VAR
 VAR
 CaseN : INT;	
 F_Ready : F_TRIG;
-F_OFF : F_TRIG;
+LayerCount : INT;
+Open_TIME : TON;
+PUSH_OUT : TON;
+
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[F_Ready(CLK:=PallettReady);
-F_OFF(CLK := PalettUNLOADED);
+      <ST><![CDATA[
+
+
+
+PUSH_OUT(IN:= Raklap_OUT, PT := T#3S);
+
+
+Open_TIME(IN:=DOOR_OPEN, PT:= T#4S);
+
+
+IF Open_TIME.Q THEN
+	LayerCount := LayerCount + 1;
+END_IF
+
+
 CASE CaseN OF
-0:
-	IF PallettReady THEN // ha van raklap a lif lemegy
-		LiftDown := 1;
-		LiftEnd := 1;
-		CaseN := 10;
-	END_IF
+
 	
-10:
- 	IF LiftRun = 0 THEN //lift lent
-		LiftDown := 0;
-		LiftEnd := 0;
-	IF F_Ready.Q THEN    // Raklap bent
+0:
+		Raklap_IN := 1;
+		
+	IF RaklapInLift THEN 
+	Raklap_IN := 0;   // Raklap bent
 		CaseN := 20;
-	END_IF
+	
 	END_IF
 20:							//lift felmegy
 		LiftUp := 1;
 		LiftEnd := 1;
+		LayerCount := 0;   //Layer reset
 	IF LiftRun = 0 THEN
 		CaseN := 30;
 		LiftPos := 0;
@@ -118,8 +133,13 @@ LiftEnd := 0;
 CaseN := 70;
 END_IF
 	
-70:										//Lift vár a kihordásra
-	IF F_OFF.Q THEN
+70:										//Lift kirakod
+	Raklap_OUT := 1;
+	CaseN := 71;
+	
+71:
+	IF PUSH_OUT.Q = 1 THEN
+		Raklap_OUT := 0;
 		CaseN := 0;
 	END_IF
 
@@ -129,20 +149,27 @@ END_CASE]]></ST>
     <LineIds Name="LIFT">
       <LineId Id="42" Count="0" />
       <LineId Id="129" Count="0" />
+      <LineId Id="163" Count="1" />
+      <LineId Id="161" Count="1" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="143" Count="2" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="139" Count="0" />
       <LineId Id="9" Count="0" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="28" Count="1" />
-      <LineId Id="31" Count="1" />
-      <LineId Id="30" Count="0" />
-      <LineId Id="26" Count="0" />
-      <LineId Id="33" Count="1" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="41" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="152" Count="1" />
       <LineId Id="40" Count="0" />
+      <LineId Id="174" Count="0" />
       <LineId Id="43" Count="0" />
       <LineId Id="39" Count="0" />
       <LineId Id="25" Count="0" />
       <LineId Id="44" Count="2" />
+      <LineId Id="146" Count="0" />
       <LineId Id="23" Count="0" />
       <LineId Id="48" Count="0" />
       <LineId Id="59" Count="0" />
@@ -184,7 +211,12 @@ END_CASE]]></ST>
       <LineId Id="64" Count="0" />
       <LineId Id="123" Count="0" />
       <LineId Id="127" Count="0" />
-      <LineId Id="130" Count="1" />
+      <LineId Id="165" Count="1" />
+      <LineId Id="168" Count="0" />
+      <LineId Id="167" Count="0" />
+      <LineId Id="169" Count="0" />
+      <LineId Id="171" Count="0" />
+      <LineId Id="170" Count="0" />
       <LineId Id="125" Count="0" />
       <LineId Id="124" Count="0" />
       <LineId Id="20" Count="0" />

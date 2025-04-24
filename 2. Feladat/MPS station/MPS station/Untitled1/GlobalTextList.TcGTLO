@@ -1,10 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
   <GlobalTextList Name="GlobalTextList" Id="{0b082dc8-f635-4f36-b98a-e5631722ca4b}">
     <XmlArchive>
       <Data>
         <o xml:space="preserve" t="GlobalTextListObject">
           <l n="TextList" t="ArrayList" cet="TextListRow">
+            <o>
+              <v n="TextID">"169"</v>
+              <v n="TextDefault">" TrackOUT_EM"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
             <o>
               <v n="TextID">"655"</v>
               <v n="TextDefault">" TrackO_EM"</v>
@@ -26,6 +31,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"855"</v>
+              <v n="TextDefault">"Alert"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"76"</v>
               <v n="TextDefault">"Alert1"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -41,6 +51,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"120"</v>
+              <v n="TextDefault">"Behszal1"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"920"</v>
               <v n="TextDefault">"burn"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -53,6 +68,11 @@
             <o>
               <v n="TextID">"438"</v>
               <v n="TextDefault">"CarryIN_F"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"847"</v>
+              <v n="TextDefault">"CarryIN_FULL"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -86,6 +106,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"106"</v>
+              <v n="TextDefault">"Címkéző"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"283"</v>
               <v n="TextDefault">"eject"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -96,8 +121,18 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"16"</v>
+              <v n="TextDefault">"FigyVill1"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"637"</v>
               <v n="TextDefault">"Flap"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"947"</v>
+              <v n="TextDefault">"Görgösm1"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -146,6 +181,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"441"</v>
+              <v n="TextDefault">"kem TrackOUT_EM"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"172"</v>
               <v n="TextDefault">"kemdoor"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -161,13 +201,28 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"463"</v>
+              <v n="TextDefault">"Life"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"276"</v>
               <v n="TextDefault">"LiftBack"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"927"</v>
+              <v n="TextDefault">"LiftBehLánc"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"334"</v>
               <v n="TextDefault">"LiftDOWN"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"998"</v>
+              <v n="TextDefault">"LiftDW"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -241,16 +296,6 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
-              <v n="TextID">"413"</v>
-              <v n="TextDefault">"PAL IN"</v>
-              <l n="LanguageTexts" t="ArrayList" />
-            </o>
-            <o>
-              <v n="TextID">"255"</v>
-              <v n="TextDefault">"PAL PUSH"</v>
-              <l n="LanguageTexts" t="ArrayList" />
-            </o>
-            <o>
               <v n="TextID">"12"</v>
               <v n="TextDefault">"PalettGO"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -268,6 +313,11 @@
             <o>
               <v n="TextID">"158"</v>
               <v n="TextDefault">"PalettOPEN"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"719"</v>
+              <v n="TextDefault">"Palett_GO_E"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -308,6 +358,11 @@
             <o>
               <v n="TextID">"583"</v>
               <v n="TextDefault">"PressFULL"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"524"</v>
+              <v n="TextDefault">"Press_FULL"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
@@ -391,6 +446,11 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"894"</v>
+              <v n="TextDefault">"Track"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"986"</v>
               <v n="TextDefault">"TrackIN"</v>
               <l n="LanguageTexts" t="ArrayList" />
@@ -401,8 +461,18 @@
               <l n="LanguageTexts" t="ArrayList" />
             </o>
             <o>
+              <v n="TextID">"675"</v>
+              <v n="TextDefault">"TrackIN_EMY"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
               <v n="TextID">"903"</v>
               <v n="TextDefault">"TrackOUT"</v>
+              <l n="LanguageTexts" t="ArrayList" />
+            </o>
+            <o>
+              <v n="TextID">"651"</v>
+              <v n="TextDefault">"Warning"</v>
               <l n="LanguageTexts" t="ArrayList" />
             </o>
           </l>
