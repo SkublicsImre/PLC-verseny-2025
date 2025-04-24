@@ -5,63 +5,119 @@
 VAR
 	INMODE : INMODE;
 	
-	DelayTimer : TON;
-	DelayAmount : TIME;
-	DelayONtrigger : BOOL;
+	Timer : TON;
+	TimerT : TIME;
+	TimerSW : BOOL;
+	
 	FallTrig : F_TRIG;
 	FallTrigCLK : BOOL;
+	
+	RiseTrig : R_TRIG;
+	
 	Pulse : Pulse;
 	PulseSIGNAL : BOOL; 
 	PulseTime : TIME;
+	
+	N : INT :=0;
+	Task : WSTRING;
+	Logs : WSTRING;
+	
+	Carry_IN : BOOL;
+	Press : BOOL;
+	Track_IN : BOOL;
+	Alert_1 : BOOL;
+	LiftUP : BOOL;
+	Lift_DOWN : BOOL;
+	Lift_END : BOOL;
+	Lift_IN  : BOOL;
+	Palett_IN : BOOL;
+	Palett_GRAB : BOOL;
+	Palett_GO : BOOL;
+	Flap : BOOL;
+	Palett_OPEN : BOOL;
+	Track_OUT : BOOL;
+	Horn : BOOL;
+	Alert_2 : BOOL;
+	
+	Carry_IN_FULL : BOOL;
+	Press_FULL : BOOL;
+	Press_CLOSED : BOOL;
+	System_OK : BOOL;
+	Trac_IN_EMPTY : BOOL;
+	Track_OUT_EMPTY : BOOL;
+	Lift_FRONT : BOOL;
+	Lift_BACK : BOOL;
+	Lift_RUN : BOOL;
+	Peltt_GO_END : BOOL;
+	Palett_CLOSED : BOOL;
+	Palett_GRAB_OK : BOOL;
+	Auto_SWITCH : BOOL;
+	START : BOOL;
+	STOP : BOOL;
+	RESET : BOOL;
 	
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[INMODE(); 
 
-DelayTimer(IN:=DelayONtrigger,PT:=DelayAmount);
+Timer(IN:=TimerSW,PT:=TimerT);
 FallTrig(CLK:=FallTrigCLK);
 Pulse(SIGNAL:=PulseSIGNAL,Pulse_time:=PulseTime);
 
- := GIOL.In0;
- := GIOL.In1;
- := GIOL.In3;
- := GIOL.In2;
- := GIOL.In4;
- := GIOL.In7;
- := GIOL.In5;
- := GIOL.In6;
- := GIOL.In8;
- := GIOL.In9;
- := GIOL.In10;
- := GIOL.In11;
- := GIOL.In12;
- := GIOL.In13;
- := GIOL.In14;
- := GIOL.In15;
+GIOL.TaskName := Task;
+GIOL.CaseNum := N;
 
-GIOL.Out0 :=
-GIOL.Out1 := 
-GIOL.Out2 :=
-GIOL.Out3 := 
-GIOL.Out4 := 
-GIOL.Out5 := 
-GIOL.Out6 := 
-GIOL.Out7 := 
-GIOL.Out8 :=
-GIOL.Out9 := 
-GIOL.Out10 := 
-GIOL.Out11 := 
-GIOL.Out12 := 
-GIOL.Out13 := 
-GIOL.Out14 := 
-GIOL.Out15 := 
+Carry_IN_FULL := GIOL.In0;
+Press_FULL := GIOL.In1;
+Press_CLOSED := GIOL.In3;
+System_OK := GIOL.In2;
+Trac_IN_EMPTY := GIOL.In4;
+Track_OUT_EMPTY := GIOL.In7;
+Lift_FRONT := GIOL.In5;
+Lift_BACK := GIOL.In6;
+Lift_RUN := GIOL.In8;
+Peltt_GO_END := GIOL.In9;
+Palett_CLOSED := GIOL.In10;
+Palett_GRAB_OK := GIOL.In11;
+Auto_SWITCH := GIOL.In12;
+START := GIOL.In13;
+STOP := GIOL.In14;
+RESET := GIOL.In15;
 
-CASE GIOL.CaseNum OF
+GIOL.Out0 := Carry_IN;
+GIOL.Out1 := Press;
+GIOL.Out2 := Track_IN;
+GIOL.Out3 := Alert_1;
+GIOL.Out4 := LiftUP;
+GIOL.Out5 := Lift_DOWN;
+GIOL.Out6 := Lift_END;
+GIOL.Out7 := Lift_IN;
+GIOL.Out8 := Palett_IN;
+GIOL.Out9 := Palett_GRAB;
+GIOL.Out10 := Palett_GO;
+GIOL.Out11 := Flap;
+GIOL.Out12 := Palett_OPEN;
+GIOL.Out13 := Track_OUT;
+GIOL.Out14 := Horn;
+GIOL.Out15 := Alert_2;
+
+
+CASE N OF
+	0:Task:="Press impulse 0";
+		Carry_IN:=TRUE;
+		N:=10;
+	10:Task:="Press impulse 0";
+		IF Press_FULL THEN
+			Press:=TRUE;
+			N:=20;
+		END_IF
+	20:Task:="Press impulse 50";
+		Press:=FALSE;
+		N:=21;
 	
-	0:GIOL.TaskName:="Idle position, wait for start button";
 	ELSE
-		GIOL.CaseNum:=0;
+		N:=0;
 END_CASE
 ]]></ST>
     </Implementation>
@@ -71,6 +127,9 @@ END_CASE
       <LineId Id="229" Count="0" />
       <LineId Id="270" Count="0" />
       <LineId Id="294" Count="0" />
+      <LineId Id="681" Count="0" />
+      <LineId Id="680" Count="0" />
+      <LineId Id="682" Count="0" />
       <LineId Id="657" Count="0" />
       <LineId Id="127" Count="3" />
       <LineId Id="133" Count="2" />
@@ -84,10 +143,19 @@ END_CASE
       <LineId Id="165" Count="4" />
       <LineId Id="656" Count="0" />
       <LineId Id="171" Count="0" />
+      <LineId Id="724" Count="0" />
       <LineId Id="132" Count="0" />
       <LineId Id="75" Count="0" />
       <LineId Id="224" Count="0" />
+      <LineId Id="729" Count="0" />
+      <LineId Id="731" Count="0" />
       <LineId Id="76" Count="0" />
+      <LineId Id="732" Count="1" />
+      <LineId Id="735" Count="0" />
+      <LineId Id="734" Count="0" />
+      <LineId Id="725" Count="0" />
+      <LineId Id="736" Count="0" />
+      <LineId Id="739" Count="1" />
       <LineId Id="78" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="77" Count="0" />
