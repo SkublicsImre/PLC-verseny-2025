@@ -41,6 +41,9 @@
     <Compile Include="POUs\BLINK.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\LIFT.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>

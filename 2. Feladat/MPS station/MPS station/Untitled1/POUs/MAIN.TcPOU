@@ -19,7 +19,7 @@ VAR
 	PulseSIGNAL : BOOL; 
 	PulseTime : TIME;
 	
-	N1: INT;
+	N1: INT:=555;
 	N2: INT;
 	Task : WSTRING;
 	Task2: WSTRING;
@@ -29,7 +29,7 @@ VAR
 	Press : BOOL;
 	Track_IN : BOOL;
 	Alert_1 : BOOL;
-	LiftUP : BOOL;
+	Lift_UP : BOOL;
 	Lift_DOWN : BOOL;
 	Lift_END : BOOL;
 	Lift_IN  : BOOL;
@@ -69,17 +69,15 @@ VAR
 	
 	BOX_Count_FULL : BOOL;
 	Line_Count_FULL : BOOL;
+	Lift_OK : BOOL;
+	
+	
+	LIFT : LIFT;
 	
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[INMODE(); 
-
-Timer(IN:=TimerSW,PT:=TimerT);
-FallTrig(CLK:=FallTrigCLK);
-RiseTrig(CLK:=Carry_IN_FULL);
-Pulse(SIGNAL:=PulseSIGNAL,Pulse_time:=PulseTime);
-
 GIOL.TaskName := Task;
 GIOL.CaseNum := N1;
 
@@ -88,12 +86,12 @@ GIOL.CaseNum2 := N2;
 
 Carry_IN_FULL := GIOL.In0;
 Press_FULL := GIOL.In1;
-Press_END := GIOL.In3;
-System_OK := GIOL.In2;
+Press_END := GIOL.In2;
+System_OK := GIOL.In3;
 Track_IN_EMPTY := GIOL.In4;
-Track_OUT_EMPTY := GIOL.In7;
-Lift_FRONT := GIOL.In5;
-Lift_BACK := GIOL.In6;
+Track_OUT_EMPTY := GIOL.In5;
+Lift_FRONT := GIOL.In6;
+Lift_BACK := GIOL.In7;
 Lift_RUN := GIOL.In8;
 Palett_PUSH_END := GIOL.In9;
 Palett_CLOSED := GIOL.In10;
@@ -107,7 +105,7 @@ GIOL.Out0 := Carry_IN;
 GIOL.Out1 := Press;
 GIOL.Out2 := Track_IN;
 GIOL.Out3 := Alert_1;
-GIOL.Out4 := LiftUP;
+GIOL.Out4 := Lift_UP;
 GIOL.Out5 := Lift_DOWN;
 GIOL.Out6 := Lift_END;
 GIOL.Out7 := Lift_IN;
@@ -119,6 +117,25 @@ GIOL.Out12 := Palett_OPEN;
 GIOL.Out13 := Track_OUT;
 GIOL.Out14 := Horn;
 GIOL.Out15 := Alert_2;
+
+IF System_OK THEN 
+
+IF NOT(N1 = 555 OR N1= 666) THEN
+	LIFT(LiftRun:=Lift_RUN,DOOR_OPEN:=Palett_OPEN ,RaklapInLift:=Lift_FRONT);
+	Lift_UP := LIFT.LiftUp;
+	Lift_DOWN := LIFT.LiftDown;
+	Lift_END := LIFT.LiftEnd;
+	Lift_OK := LIFT.LiftReady;
+	Track_IN := LIFT.Raklap_IN;
+	Track_OUT := LIFT.Raklap_OUT;
+	Timer(IN:=TimerSW,PT:=TimerT);
+	FallTrig(CLK:=FallTrigCLK);
+	RiseTrig(CLK:=Carry_IN_FULL);
+	Pulse(SIGNAL:=PulseSIGNAL,Pulse_time:=PulseTime);
+	Lift_IN := LIFT.Raklap_MID;
+END_IF
+
+
 
 //STACK MODE
 IF Stack_MODE THEN
@@ -167,15 +184,57 @@ END_IF
 
 //Async TASK_1 { Carry_IN, Palett_ALL
 //
-CASE N1 OF
+
+IF RESET THEN
+	Carry_IN := FALSE;
+	Press := FALSE;
+	Track_IN := FALSE;
+	Alert_1 := FALSE;
+	Lift_UP := FALSE;
+	Lift_DOWN := FALSE;
+	Lift_END := FALSE;
+	Lift_IN  := FALSE;
+	Palett_IN := FALSE;
+	Palett_GRAB := FALSE;
+	Palett_PUSH := FALSE;
+	Flap := FALSE;
+	Palett_OPEN := FALSE;
+	Track_OUT := FALSE;
+	Horn := FALSE;
+	Alert_2 := FALSE;
 	
-	0:Task:="Building first line";
+	BOX_Count := 0;
+	Line_Count := 0;
+	Layer_Count := 0;
+	RAK_Count := 0;
+	
+	Stack_MODE := TRUE; //if 1 then 3x2; if 0 then 2x3
+	Layer_READY := FALSE;
+	
+	BOX_Count_FULL := FALSE;
+	Line_Count_FULL := FALSE;
+	N1:=555;
+END_IF
+
+	
+CASE N1 OF
+	555:Task:="Wait for Auto switch";
+		IF Auto_SWITCH THEN
+			N1:=666;
+		END_IF
+		
+	666:Task:="Wait for start";
+		IF START  THEN
+			N1:=0;
+		END_IF
+	
+	0:Task:="Building line";
 		Carry_IN := TRUE;
 		Palett_IN := TRUE;
 		Palett_OPEN := FALSE;
 		N1:=10;
 		
-	10:Task:="Building first line";	
+	10:Task:="Building line";	
 		IF BOX_Count_FULL THEN
 			Carry_IN := FALSE;
 			Palett_IN := FALSE;
@@ -208,7 +267,7 @@ CASE N1 OF
 		END_IF
 		
 	60:Task:="";
-		IF Palett_GRAB_OK THEN
+		IF Palett_GRAB_OK AND Lift_OK THEN
 			Palett_OPEN:=TRUE;
 			TimerT:=T#3S;
 			N1:=70;
@@ -219,45 +278,62 @@ CASE N1 OF
 		IF Timer.Q THEN
 			Palett_GRAB := FALSE;
 			TimerSW:=FALSE;
-			N1:=0;
+			;
 		END_IF
 	ELSE
 		N1:=0;
 END_CASE
-//} Async TASK_1
-
-//Async TASK_2 { Rack, 
-CASE N2 OF
-	0:Task2:="";
-	ELSE
-		N2:=0;
-END_CASE
-//} Async TASK_2]]></ST>
+ELSE
+	Carry_IN := FALSE;
+	Press := FALSE;
+	Track_IN := FALSE;
+	Alert_1 := FALSE;
+	Lift_UP := FALSE;
+	Lift_DOWN := FALSE;
+	Lift_END := FALSE;
+	Lift_IN  := FALSE;
+	Palett_IN := FALSE;
+	Palett_GRAB := FALSE;
+	Palett_PUSH := FALSE;
+	Flap := FALSE;
+	Palett_OPEN := FALSE;
+	Track_OUT := FALSE;
+	Horn := FALSE;
+	Alert_2 := FALSE;
+	
+	BOX_Count := 0;
+	Line_Count := 0;
+	Layer_Count := 0;
+	RAK_Count := 0;
+	
+	Stack_MODE := TRUE; //if 1 then 3x2; if 0 then 2x3
+	Layer_READY := FALSE;
+	
+	BOX_Count_FULL := FALSE;
+	Line_Count_FULL := FALSE;
+END_IF]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="69" Count="0" />
+      <LineId Id="1080" Count="37" />
+      <LineId Id="1079" Count="0" />
+      <LineId Id="1119" Count="0" />
+      <LineId Id="1118" Count="0" />
+      <LineId Id="1189" Count="0" />
+      <LineId Id="1078" Count="0" />
       <LineId Id="658" Count="0" />
+      <LineId Id="1062" Count="0" />
+      <LineId Id="1064" Count="0" />
+      <LineId Id="1066" Count="0" />
+      <LineId Id="1065" Count="0" />
+      <LineId Id="1070" Count="1" />
       <LineId Id="229" Count="0" />
       <LineId Id="270" Count="0" />
       <LineId Id="841" Count="0" />
       <LineId Id="294" Count="0" />
+      <LineId Id="1191" Count="0" />
+      <LineId Id="1190" Count="0" />
       <LineId Id="681" Count="0" />
-      <LineId Id="680" Count="0" />
-      <LineId Id="682" Count="0" />
-      <LineId Id="829" Count="1" />
-      <LineId Id="828" Count="0" />
-      <LineId Id="657" Count="0" />
-      <LineId Id="127" Count="3" />
-      <LineId Id="133" Count="2" />
-      <LineId Id="137" Count="6" />
-      <LineId Id="145" Count="0" />
-      <LineId Id="147" Count="0" />
-      <LineId Id="154" Count="0" />
-      <LineId Id="153" Count="0" />
-      <LineId Id="148" Count="0" />
-      <LineId Id="157" Count="6" />
-      <LineId Id="165" Count="4" />
-      <LineId Id="656" Count="0" />
       <LineId Id="171" Count="0" />
       <LineId Id="919" Count="0" />
       <LineId Id="918" Count="0" />
@@ -298,7 +374,23 @@ END_CASE
       <LineId Id="834" Count="0" />
       <LineId Id="132" Count="0" />
       <LineId Id="837" Count="0" />
+      <LineId Id="1130" Count="0" />
+      <LineId Id="1074" Count="0" />
+      <LineId Id="1133" Count="10" />
+      <LineId Id="1148" Count="0" />
+      <LineId Id="1145" Count="2" />
+      <LineId Id="1131" Count="0" />
+      <LineId Id="1149" Count="0" />
+      <LineId Id="1151" Count="8" />
+      <LineId Id="1150" Count="0" />
+      <LineId Id="1160" Count="0" />
+      <LineId Id="1132" Count="0" />
+      <LineId Id="1073" Count="0" />
+      <LineId Id="1075" Count="0" />
       <LineId Id="75" Count="0" />
+      <LineId Id="1125" Count="3" />
+      <LineId Id="1161" Count="0" />
+      <LineId Id="1121" Count="3" />
       <LineId Id="876" Count="0" />
       <LineId Id="739" Count="0" />
       <LineId Id="862" Count="1" />
@@ -346,10 +438,9 @@ END_CASE
       <LineId Id="78" Count="0" />
       <LineId Id="80" Count="0" />
       <LineId Id="77" Count="0" />
-      <LineId Id="835" Count="1" />
-      <LineId Id="807" Count="1" />
-      <LineId Id="820" Count="2" />
-      <LineId Id="806" Count="0" />
+      <LineId Id="1077" Count="0" />
+      <LineId Id="1163" Count="25" />
+      <LineId Id="1162" Count="0" />
       <LineId Id="91" Count="0" />
     </LineIds>
   </POU>
