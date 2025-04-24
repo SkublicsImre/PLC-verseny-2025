@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="LIFT" Id="{fe2b07cc-ed9f-4fb9-8a70-1b754d8ab060}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK LIFT
+VAR_INPUT
+	LiftRun : BOOL;
+	PallettReady : BOOL;
+	PalettUNLOADED : BOOL;
+	LayerCount : INT;
+	//PalettLoaded : BOOL;
+END_VAR
+VAR_OUTPUT
+	LiftUp : BOOL;
+	LiftDown : BOOL;
+	LiftEnd : BOOL;
+	LiftReady : BOOL;
+	LiftPos : INT;	
+	
+END_VAR
+
+
+
+VAR
+CaseN : INT;	
+F_Ready : F_TRIG;
+F_OFF : F_TRIG;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[F_Ready(CLK:=PallettReady);
+F_OFF(CLK := PalettUNLOADED);
+CASE CaseN OF
+0:
+	IF PallettReady THEN // ha van raklap a lif lemegy
+		LiftDown := 1;
+		LiftEnd := 1;
+		CaseN := 10;
+	END_IF
+	
+10:
+ 	IF LiftRun = 0 THEN //lift lent
+		LiftDown := 0;
+		LiftEnd := 0;
+	IF F_Ready.Q THEN    // Raklap bent
+		CaseN := 20;
+	END_IF
+	END_IF
+20:							//lift felmegy
+		LiftUp := 1;
+		LiftEnd := 1;
+	IF LiftRun = 0 THEN
+		CaseN := 30;
+		LiftPos := 0;
+	
+	END_IF
+30:						//Lift lemegy egy lépést
+	LiftDown:= 1;
+	CaseN:= 31;
+	
+	
+31:
+LiftDown := 0;
+IF LiftRun = 0 THEN
+LiftReady := 1;
+LiftPos := 1;
+CaseN := 40;
+END_IF
+
+
+40:
+	
+IF LayerCount = 1 THEN   // első sor megvan le mozog a lift
+	LiftDown := 1;
+	LiftReady := 0;
+	
+	CaseN := 41;
+	END_IF
+41:
+LiftDown := 0;
+IF LiftRun = 0 THEN     
+LiftReady := 1;
+LiftPos := 2;
+CaseN := 40;
+END_IF
+
+
+50: 
+
+IF LayerCount = 2 THEN   // második sor megvan le mozog a lift
+	LiftDown := 1;
+	LiftReady := 0;
+	
+	CaseN := 51;
+	END_IF
+51:
+LiftDown := 0;
+IF LiftRun = 0 THEN     
+LiftReady := 1;
+LiftPos := 3;
+CaseN := 60;
+END_IF
+
+60: 
+
+IF LayerCount = 2 THEN   // Harmadik sor megvan le mozog a lift végállásig
+	LiftDown := 1;
+	LiftEnd := 1;
+	LiftReady := 0;
+	
+	CaseN := 61;
+	END_IF
+61:
+
+IF LiftRun = 0 THEN      
+LiftPos := 4;
+LiftDown := 0;
+LiftEnd := 0;
+CaseN := 70;
+END_IF
+	
+70:										//Lift vár a kihordásra
+	IF F_OFF.Q THEN
+		CaseN := 0;
+	END_IF
+
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="LIFT">
+      <LineId Id="42" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="28" Count="1" />
+      <LineId Id="31" Count="1" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="33" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="44" Count="2" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="51" Count="1" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="69" Count="1" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="76" Count="1" />
+      <LineId Id="53" Count="2" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="65" Count="1" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="82" Count="2" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="90" Count="12" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="105" Count="4" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="110" Count="6" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="121" Count="1" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="130" Count="1" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="20" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
