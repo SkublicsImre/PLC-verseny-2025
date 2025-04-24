@@ -79,6 +79,9 @@ VAR_GLOBAL
 	TaskName : WSTRING := "Null Task";
 	CaseNum  : INT := 0;
 	
+	TaskName2 : WSTRING := "Null Task";
+	CaseNum2 : INT := 0;
+	
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
