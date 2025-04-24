@@ -126,9 +126,10 @@ IF Stack_MODE THEN
 	IF Line_Count = 3 THEN
 			Line_Count := 0;
 			Line_Count_FULL :=TRUE;
+			Layer_Count := Layer_Count +1;
 	END_IF
-	IF BOX_Count = 2 THEN
-		BOX_Count := 0;
+	IF BOX_Count = 3 THEN
+		BOX_Count := 1;
 		BOX_Count_FULL := TRUE;
 	END_IF
 ELSE
@@ -136,8 +137,9 @@ ELSE
 	IF Line_Count = 2 THEN
 			Line_Count := 0;
 			Line_Count_FULL :=TRUE;
+			Layer_Count := Layer_Count +1;
 	END_IF
-	IF BOX_Count = 3 THEN
+	IF BOX_Count = 4 THEN
 		BOX_Count := 0;
 		BOX_Count_FULL := TRUE;
 	END_IF
@@ -167,7 +169,7 @@ END_IF
 //
 CASE N1 OF
 	
-	0:Task:="Building first box layer";
+	0:Task:="Building first line";
 		Carry_IN := TRUE;
 		Palett_IN := TRUE;
 		Palett_OPEN := FALSE;
@@ -178,9 +180,8 @@ CASE N1 OF
 			Carry_IN := FALSE;
 			Palett_IN := FALSE;
 			Palett_PUSH := TRUE;
-			Line_Count := Line_Count + 1;
-			
-			TimerT:=T#500MS;
+			BOX_Count :=1;
+			TimerT:=T#3500MS;
 			BOX_Count_FULL := FALSE;
 			N1:=20;
 		END_IF
@@ -188,25 +189,17 @@ CASE N1 OF
 	20:Task:="Stop Boxes and push line";
 		TimerSW:=TRUE;
 		IF Timer.Q THEN
+			Line_Count := Line_Count + 1;
 			TimerSW := FALSE;
+			Palett_PUSH := FALSE;
 			N1:=30;
 		END_IF
 		
 	30:Task:="Stop Boxes and push line";
-		IF Palett_PUSH_END THEN
-			Palett_PUSH := FALSE;
-			N1:= 40;
-		END_IF
-	40:Task:="Stop Boxes and push line";
-		TimerSW:=TRUE;
+		TimerSW := TRUE;
 		IF Timer.Q THEN
 			TimerSW:=FALSE;
-			N1:=50;
-		END_IF
-	50:Task:="Stop Boxes and push line";
-		IF Palett_PUSH_END THEN
-			Palett_PUSH := FALSE;
-			N1:=0;	
+			N1:= 0;
 		END_IF
 		IF Line_Count_FULL THEN
 			N1:=60;
@@ -215,18 +208,17 @@ CASE N1 OF
 		END_IF
 		
 	60:Task:="";
-		TimerSW:=TRUE;
-		IF Timer.Q THEN
-			TimerSW := FALSE;
+		IF Palett_GRAB_OK THEN
 			Palett_OPEN:=TRUE;
 			TimerT:=T#3S;
 			N1:=70;
 		END_IF
+		
 	70:Task:="";
 		TimerSW:=TRUE;
 		IF Timer.Q THEN
 			Palett_GRAB := FALSE;
-			TimerSW:=0;
+			TimerSW:=FALSE;
 			N1:=0;
 		END_IF
 	ELSE
@@ -274,13 +266,16 @@ END_CASE
       <LineId Id="923" Count="0" />
       <LineId Id="926" Count="0" />
       <LineId Id="928" Count="0" />
+      <LineId Id="982" Count="0" />
       <LineId Id="927" Count="0" />
       <LineId Id="929" Count="0" />
       <LineId Id="933" Count="1" />
       <LineId Id="931" Count="0" />
       <LineId Id="921" Count="0" />
       <LineId Id="978" Count="0" />
-      <LineId Id="945" Count="6" />
+      <LineId Id="945" Count="2" />
+      <LineId Id="983" Count="0" />
+      <LineId Id="948" Count="3" />
       <LineId Id="944" Count="0" />
       <LineId Id="924" Count="0" />
       <LineId Id="922" Count="0" />
@@ -313,7 +308,6 @@ END_CASE
       <LineId Id="865" Count="0" />
       <LineId Id="855" Count="1" />
       <LineId Id="860" Count="1" />
-      <LineId Id="908" Count="0" />
       <LineId Id="979" Count="0" />
       <LineId Id="872" Count="0" />
       <LineId Id="916" Count="0" />
@@ -323,30 +317,28 @@ END_CASE
       <LineId Id="868" Count="0" />
       <LineId Id="873" Count="0" />
       <LineId Id="740" Count="0" />
+      <LineId Id="984" Count="0" />
       <LineId Id="878" Count="0" />
+      <LineId Id="985" Count="0" />
       <LineId Id="880" Count="0" />
       <LineId Id="879" Count="0" />
       <LineId Id="883" Count="0" />
       <LineId Id="881" Count="1" />
+      <LineId Id="986" Count="0" />
       <LineId Id="884" Count="0" />
       <LineId Id="887" Count="0" />
       <LineId Id="885" Count="0" />
-      <LineId Id="888" Count="2" />
-      <LineId Id="893" Count="0" />
-      <LineId Id="891" Count="1" />
-      <LineId Id="894" Count="0" />
-      <LineId Id="898" Count="1" />
-      <LineId Id="902" Count="0" />
-      <LineId Id="900" Count="0" />
       <LineId Id="909" Count="0" />
       <LineId Id="913" Count="0" />
       <LineId Id="915" Count="0" />
       <LineId Id="952" Count="0" />
       <LineId Id="914" Count="0" />
-      <LineId Id="954" Count="4" />
+      <LineId Id="954" Count="1" />
+      <LineId Id="957" Count="0" />
       <LineId Id="961" Count="1" />
       <LineId Id="960" Count="0" />
       <LineId Id="959" Count="0" />
+      <LineId Id="989" Count="0" />
       <LineId Id="963" Count="3" />
       <LineId Id="969" Count="0" />
       <LineId Id="968" Count="0" />
